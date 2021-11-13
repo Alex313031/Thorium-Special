@@ -5,6 +5,8 @@ Simply a seperate repo for builds of Thorium https://github.com/Alex313031/Thori
 
 Right now BUILD.gn is set to icelake, but I will be building for Vishera and IceLake/Comet Lake CPUs (i.e. 2nd-Gen AMD FX "Vishera" and 10th-Gen Intel Core i Desktop/Mobile processors).
 
+TODO: Make a component build for testing, and start building for haswell.
+
 ## Building
 
 Clone and do everything in https://github.com/Alex313031/Thorium except before building, copy the BUILD.gn file in this repo to //chromium/build/config/compiler/, and modify as per below. (You can just copy the 'build' dir in this repo into //chromium/src)
