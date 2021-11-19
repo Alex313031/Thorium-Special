@@ -1,7 +1,7 @@
 # Thorium-Special
 Special builds of Thorium
 
-Simply a seperate repo for builds of Thorium https://github.com/Alex313031/Thorium that have modified compiler flags flags or args.gn flags for specific processors or use cases.
+Simply a seperate repo for builds of Thorium https://github.com/Alex313031/Thorium that have modified compiler flags flags or args.gn flags for specific processors or use cases. I will sometimes but builds that don't need AVX here.
 
 Right now BUILD.gn is set to icelake, but I will be building for Vishera and IceLake/Comet Lake CPUs (i.e. 2nd-Gen AMD FX "Vishera" and 10th-Gen Intel Core i Desktop/Mobile processors).
 
