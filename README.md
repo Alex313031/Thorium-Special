@@ -3,6 +3,8 @@ Special builds of Thorium
 
 Simply a seperate repo for builds of Thorium https://github.com/Alex313031/Thorium that have modified compiler flags flags or args.gn flags for specific processors or use cases. I will sometimes put builds that don't need AVX here.
 
+&ndash; NEW: Thorium Special now has experimental Android builds for ARM64. The tags will have ARM64 in the name.
+
 I will be building for Vishera and Haswell CPUs (i.e. 2nd-Gen AMD FX "Vishera" and 4th-Gen Intel Core i Desktop/Mobile processors).
 
 TODO: Make a component build for testing, and start building for haswell.
