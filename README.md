@@ -3,6 +3,8 @@ Special builds of Thorium
 
 Simply a seperate repo for builds of Thorium https://github.com/Alex313031/Thorium that have modified compiler flags flags or args.gn flags for specific processors or use cases. I will sometimes put builds that don't need AVX here.
 
+Windows builds are here > https://github.com/Alex313031/Thorium-Win
+
 Releases will have the architecture name in the name and the .deb package to differentiate them.
 
 &ndash; NEW: Thorium Special now has experimental Android builds for ARM64. The tags will have ARM64 in the name.
