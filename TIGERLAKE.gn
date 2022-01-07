@@ -900,9 +900,7 @@ config("compiler_cpu_abi") {
         "-mno-avx512bitalg",
         "-mno-avx512vpopcntdq",
         "-mno-avx512vp2intersect",
-        "-mno-avx5124fmaps",
         "-mno-avx512vnni",
-        "-mno-avx5124vnniw",
       ]
       ldflags += [ "-m64" ]
     } else if (current_cpu == "x86") {
