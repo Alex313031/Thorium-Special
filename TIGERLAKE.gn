@@ -886,6 +886,23 @@ config("compiler_cpu_abi") {
         "-m64",
         "-march=tigerlake",
         "-mtune=tigerlake",
+        "-mno-avx512f",
+        "-mno-avx512pf",
+        "-mno-avx512er",
+        "-mno-avx512cd",
+        "-mno-avx512vl",
+        "-mno-avx512bw",
+        "-mno-avx512dq",
+        "-mno-avx512ifma",
+        "-mno-avx512vbmi",
+        "-mno-avx512vbmi2",
+        "-mno-avx512bf16",
+        "-mno-avx512fp16",
+        "-mno-avx512bitalg",
+        "-mno-avx512vpopcntdq",
+        "-mno-avx512vp2intersect",
+        "-mno-avx512vnni",
+        
       ]
       ldflags += [ "-m64" ]
     } else if (current_cpu == "x86") {
