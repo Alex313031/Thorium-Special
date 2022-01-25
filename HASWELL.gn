@@ -1,4 +1,4 @@
-# Copyright (c) 2021 The Chromium Authors and Alex313031. All rights reserved.
+# Copyright (c) 2022 The Chromium Authors and Alex313031. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -598,6 +598,7 @@ config("compiler") {
       cflags_cc += [ "-std=${standard_prefix}++17" ]
     }
   } else if (is_win) {
+    cflags_c += [ "/std:c11" ]
     cflags_cc += [ "/std:c++17" ]
   } else if (!is_nacl) {
     # TODO(mcgrathr) - the NaCl GCC toolchain doesn't support either gnu11/gnu++11
@@ -702,9 +703,9 @@ config("compiler") {
         # bloat of ThinLTO to <10%, but that's potentially no longer true.
         # FIXME(inglorion): maybe tune these?
         if (target_cpu == "arm" || target_cpu == "arm64") {
-          import_instr_limit = 20
+          import_instr_limit = 100
         } else {
-          import_instr_limit = 30
+          import_instr_limit = 100
         }
       }
 
@@ -886,15 +887,15 @@ config("compiler_cpu_abi") {
         "-march=haswell",
         "-mtune=haswell",
       ]
-      ldflags += [ "-m64" ]
+      ldflags += [ "-m64", "-Wl,-mllvm,-march=haswell", "-Wl,-mllvm,-fp-contract=fast", ]
     } else if (current_cpu == "x86") {
       cflags += [ "-m32" ]
       ldflags += [ "-m32" ]
       if (!is_nacl) {
         cflags += [
           "-mfpmath=sse",
-          "-march=haswell",
-          "-mtune=haswell",
+          "-mavx",
+          "-maes",
         ]
       }
     } else if (current_cpu == "arm") {
@@ -1537,6 +1538,40 @@ config("default_warnings") {
   }
 }
 
+# prevent_unsafe_narrowing ----------------------------------------------------
+#
+# Warnings that prevent narrowing or comparisons of integer types that are
+# likely to cause out-of-bound read/writes or Undefined Behaviour. In
+# particular, size_t is used for memory sizes, allocation, indexing, and
+# offsets. Using other integer types along with size_t produces risk of
+# memory-safety bugs and thus security exploits.
+#
+# In order to prevent these bugs, allocation sizes were historically limited to
+# sizes that can be represented within 31 bits of information, allowing `int` to
+# be safely misused instead of `size_t` (https://crbug.com/169327). In order to
+# support increasing the allocation limit we require strictly adherence to
+# using the correct types, avoiding lossy conversions, and preventing overflow.
+# To do so, enable this config and fix errors by converting types to be
+# `size_t`, which is both large enough and unsigned, when dealing with memory
+# sizes, allocations, indices, or offsets.In cases where type conversion is not
+# possible or is superfluous, use base::strict_cast<> or base::checked_cast<>
+# to convert to size_t as needed.
+# See also: https://docs.google.com/document/d/14yKUwDaorqqNfgdGqHY_nck2nn02XBQcB5N0ue4fax8
+#
+# To enable in a GN target, use:
+#   configs += [ "//build/config/compiler:prevent_unsafe_narrowing" ]
+
+config("prevent_unsafe_narrowing") {
+  if (is_clang) {
+    cflags = [
+      "-Wshorten-64-to-32",
+      "-Wimplicit-int-conversion",
+      "-Wsign-compare",
+      "-Wsign-conversion",
+    ]
+  }
+}
+
 # chromium_code ---------------------------------------------------------------
 #
 # Toggles between higher and lower warnings for code that is (or isn't)
@@ -1879,11 +1914,12 @@ config("no_incompatible_pointer_warnings") {
 # Shared settings for both "optimize" and "optimize_max" configs.
 # IMPORTANT: On Windows "/O1" and "/O2" must go before the common flags.
 if (is_win) {
-  common_optimize_on_cflags = [
+  common_optimize_on_cflags += [
     "/Ob2",  # Both explicit and auto inlining.
     "/Oy-",  # Disable omitting frame pointers, must be after /O2.
     "/Zc:inline",  # Remove unreferenced COMDAT (faster links).
   ]
+  common_optimize_on_ldflags += []
   if (!is_asan) {
     common_optimize_on_cflags += [
       # Put data in separate COMDATs. This allows the linker
@@ -1894,9 +1930,8 @@ if (is_win) {
       "/Gw",
     ]
   }
-  common_optimize_on_ldflags = []
   
-  common_optimize_on_cflags += [
+  common_optimize_on_cflags = [
     "-mllvm", "-extra-vectorizer-passes",
     "-mllvm", "-enable-cond-stores-vec",
     "-mllvm", "-slp-vectorize-hor-store",
@@ -1909,7 +1944,7 @@ if (is_win) {
     "-mllvm", "-aggressive-ext-opt",
   ]
 
-  common_optimize_on_ldflags += [
+  common_optimize_on_ldflags = [
     "-mllvm:-extra-vectorizer-passes",
     "-mllvm:-enable-cond-stores-vec",
     "-mllvm:-slp-vectorize-hor-store",
@@ -1931,12 +1966,11 @@ if (is_win) {
   if (is_official_build) {
     common_optimize_on_ldflags += [ "/OPT:REF" ]  # Remove unreferenced data.
     # TODO(thakis): Add LTO/PGO clang flags eventually, https://crbug.com/598772
+    common_optimize_on_cflags += []
   }
 } else {
-  common_optimize_on_cflags = []
-  common_optimize_on_ldflags = []
   
-  common_optimize_on_cflags += [
+  common_optimize_on_cflags = [
     "-mllvm", "-extra-vectorizer-passes",
     "-mllvm", "-enable-cond-stores-vec",
     "-mllvm", "-slp-vectorize-hor-store",
@@ -1949,7 +1983,7 @@ if (is_win) {
     "-mllvm", "-aggressive-ext-opt",
   ]
 
-  common_optimize_on_ldflags += [
+  common_optimize_on_ldflags = [
     "-Wl,-mllvm,-extra-vectorizer-passes",
     "-Wl,-mllvm,-enable-cond-stores-vec",
     "-Wl,-mllvm,-slp-vectorize-hor-store",
@@ -2002,7 +2036,7 @@ if (is_win) {
       # Specifically tell the linker to perform optimizations.
       # See http://lwn.net/Articles/192624/ .
       # -O2 enables string tail merge optimization in gold and lld.
-      "-Wl,-O2",
+      "-Wl,-O3",
       "-Wl,--gc-sections",
     ]
   }
@@ -2103,9 +2137,9 @@ config("no_optimize") {
   } else if (is_fuchsia) {
     # On Fuchsia, we optimize for size here to reduce the size of debug build
     # packages so they can be run in a KVM. See crbug.com/910243 for details.
-    cflags = [ "-Og" ]
+    cflags = [ "-O3" ]
   } else {
-    cflags = [ "-O0" ]
+    cflags = [ "-O3" ]
     ldflags = []
   }
 }
@@ -2129,11 +2163,11 @@ config("optimize_max") {
     if (is_win) {
       # Favor speed over size, /O2 must be before the common flags.
       # /O2 implies /Ot, /Oi, and /GF.
-      cflags = [ "-Xclang", "-O3" ] + common_optimize_on_cflags
+      cflags = [ "-Xclang", "-O3", ] + common_optimize_on_cflags
     } else if (optimize_for_fuzzing) {
       cflags = [ "-O1" ] + common_optimize_on_cflags
     } else {
-      cflags = [ "-O2" ] + common_optimize_on_cflags
+      cflags = [ "-O3" ] + common_optimize_on_cflags
     }
     rustflags = [ "-Copt-level=3" ]
   }
@@ -2162,7 +2196,7 @@ config("optimize_speed") {
     if (is_win) {
       # Favor speed over size, /O2 must be before the common flags.
       # /O2 implies /Ot, /Oi, and /GF.
-      cflags = [ "-Xclang", "-O3" ] + common_optimize_on_cflags
+      cflags = [ "-Xclang", "-O3", ] + common_optimize_on_cflags
     } else if (optimize_for_fuzzing) {
       cflags = [ "-O1" ] + common_optimize_on_cflags
     } else {
