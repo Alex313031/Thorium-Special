@@ -828,6 +828,11 @@ config("compiler") {
     # To make Rust .d files compatible with ninja
     "-Z",
     "dep-info-omit-d-target",
+
+    # If a macro panics during compilation, show which macro and where it is
+    # defined.
+    "-Z",
+    "macro-backtrace",
   ]
   if (rust_abi_target != "") {
     rustflags += [ "--target=$rust_abi_target" ]
@@ -897,22 +902,6 @@ config("compiler_cpu_abi") {
         "-m64",
         "-march=tigerlake",
         "-mtune=tigerlake",
-        "-mno-avx512f",
-        "-mno-avx512pf",
-        "-mno-avx512er",
-        "-mno-avx512cd",
-        "-mno-avx512vl",
-        "-mno-avx512bw",
-        "-mno-avx512dq",
-        "-mno-avx512ifma",
-        "-mno-avx512vbmi",
-        "-mno-avx512vbmi2",
-        "-mno-avx512bf16",
-        "-mno-avx512fp16",
-        "-mno-avx512bitalg",
-        "-mno-avx512vpopcntdq",
-        "-mno-avx512vp2intersect",
-        "-mno-avx512vnni",
       ]
       ldflags += [ "-m64", "-Wl,-mllvm,-march=tigerlake", "-Wl,-mllvm,-fp-contract=fast", ]
     } else if (current_cpu == "x86") {
