@@ -1,7 +1,7 @@
 google_api_key = ""
 google_default_client_id = ""
 google_default_client_secret = ""
-use_system_xcode = false
+use_system_xcode = true
 enable_stripping = true
 is_official_build = true
 is_debug = false
