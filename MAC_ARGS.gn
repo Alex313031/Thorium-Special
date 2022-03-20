@@ -50,6 +50,6 @@ enable_platform_encrypted_hevc = true
 use_thin_lto = true
 thin_lto_enable_optimizations = true
 chrome_pgo_phase = 2
-pgo_data_path = "/home/alex/chromium/src/chrome/build/pgo_profiles/chrome-linux-main-1640972563-cb58094817e1fe6c2c8f2f5c11b5380f89fc67dc.profdata"
+pgo_data_path = "/home/alex/chromium/src/chrome/build/pgo_profiles/chrome-mac-main-1641057195-012ffc8d424458130f649b669f1f653afafaf783.profdata"
 target_os = "mac"
 target_cpu = "arm64"
