@@ -10,8 +10,7 @@ AVX2 builds are here > https://github.com/Alex313031/Thorium-AVX2/
 
 Releases will have the architecture name in the name and the .deb package to differentiate them.
 
-&ndash; NEW: Thorium Special now has Raspberry Pi builds for ARM32. The tags will have ARM32 in the name.
-&ndash; NEW: Thorium Special now has experimental Android builds for ARM64/ARM32. The tags will have Android in the name.
+&ndash; NEW: Thorium Special now has Raspberry Pi builds for ARM32/ARM64 for the Pi 3/3B/3b+ and Pi 4, respectively. The tags will have ARM32 or ARM64 in the name.
 
 ## Building
 
