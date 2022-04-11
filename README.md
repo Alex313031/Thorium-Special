@@ -1,7 +1,7 @@
 # Thorium-Special
 Special builds of Thorium
 
-<img src="https://github.com/Alex313031/Thorium-AVX2/blob/main/SmallLogo.png">
+<img src="https://github.com/Alex313031/Thorium-AVX2/blob/main/ThoriumLogo.png">
 
  - Simply a seperate repo for builds of Thorium https://github.com/Alex313031/Thorium that have modified compiler flags flags or args.gn flags for specific processors or use cases. I will sometimes put builds that don't need AVX here.
 
