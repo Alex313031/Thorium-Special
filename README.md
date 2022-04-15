@@ -3,14 +3,15 @@ Special builds of Thorium
 
 <img src="https://github.com/Alex313031/Thorium-AVX2/blob/main/ThoriumLogo.png">
 
- - Simply a seperate repo for builds of Thorium https://github.com/Alex313031/Thorium that have modified compiler flags flags or args.gn flags for specific processors or use cases. I will sometimes put builds that don't need AVX here.
+ -- Simply a seperate repo for builds of Thorium https://github.com/Alex313031/Thorium that have modified compiler flags flags or args.gn flags for specific processors or use cases. I will sometimes put builds that don't need AVX here.
 
-Windows builds are here > https://github.com/Alex313031/Thorium-Win
-AVX2 builds are here > https://github.com/Alex313031/Thorium-AVX2/
+- NEW: Thorium Special now has builds for MacOS. Both x64 and ARM64 (for M1 Macs) are available. Kudos to @midzer for building them on his M1 Mac. \
+- NEW: Thorium Special now has ARM64 Raspberry Pi builds for the Pi 3B+ and Pi 4 The name will have ARM64 in the name.
+
+&ndash; Windows builds are here > https://github.com/Alex313031/Thorium-Win \
+&ndash; AVX2 builds are here > https://github.com/Alex313031/Thorium-AVX2/
 
 Releases will have the architecture name in the name and the .deb package to differentiate them.
-
-&ndash; NEW: Thorium Special now has Raspberry Pi builds for ARM32/ARM64 for the Pi 3/3B/3b+ and Pi 4, respectively. The tags will have ARM32 or ARM64 in the name.
 
 ## Building
 
@@ -20,3 +21,7 @@ You can modify BUILD.gn (which goes in //chromium/build/config/compiler/) to sui
 You can use the contents of ICELAKE.gn, BULLDOZER.gn, HASWELL.gn, MSSE4.2.gn, MSSE4.0.gn, or MSSE3.gn. Theoretically, any CPU supporting at least SSE3 can have their -march dialed in to specifically target them for best performance.
 
 You could modify args.gn by referencing the args.list file (also in the regular Thorium repo).
+
+*Thanks for using Thorium!*
+
+<img src="https://github.com/Alex313031/Thorium/blob/main/logos/STAGING/Thorium90_502.jpg" width="200">
