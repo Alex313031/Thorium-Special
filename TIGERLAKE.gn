@@ -377,7 +377,7 @@ config("compiler") {
   if ((is_posix && !is_apple) || is_fuchsia) {
     if (enable_profiling) {
       if (!is_debug) {
-        cflags += [ "-g" ]
+        cflags += [ "-g0" ]
 
         if (enable_full_stack_frames_for_profiling) {
           cflags += [
@@ -537,11 +537,6 @@ config("compiler") {
       } else {
         ldflags += [ "-Wl,-mllvm,-instcombine-lower-dbg-declare=0" ]
       }
-    }
-
-    # TODO(crbug.com/1235145): Investigate why/if this should be needed.
-    if (is_win) {
-      cflags += [ "/clang:-ffp-contract=off" ]
     }
 
     # TODO(crbug.com/1290191): Some ios tests fail without this.
@@ -839,7 +834,7 @@ config("compiler") {
     rustflags += [ "-Cembed-bitcode=no" ]
   }
   if (is_official_build) {
-    rustflags += [ "-Ccodegen-units=1", "-Copt-level=3", "-Ctarget-feature=+sse3,+sse4,+aes,+avx,+avx2", ]
+    rustflags += [ "-Ccodegen-units=1", "-Copt-level=3", "-Ctarget-feature=+sse4,+aes,+avx,+avx2", ]
   }
 }
 
@@ -899,22 +894,6 @@ config("compiler_cpu_abi") {
         "-m64",
         "-march=tigerlake",
         "-mtune=tigerlake",
-        "-mno-avx512f",
-        "-mno-avx512pf",
-        "-mno-avx512er",
-        "-mno-avx512cd",
-        "-mno-avx512vl",
-        "-mno-avx512bw",
-        "-mno-avx512dq",
-        "-mno-avx512ifma",
-        "-mno-avx512vbmi",
-        "-mno-avx512vbmi2",
-        "-mno-avx512bf16",
-        "-mno-avx512fp16",
-        "-mno-avx512bitalg",
-        "-mno-avx512vpopcntdq",
-        "-mno-avx512vp2intersect",
-        "-mno-avx512vnni",
       ]
       ldflags += [ "-m64", "-Wl,-mllvm,-march=haswell", "-Wl,-mllvm,-fp-contract=fast", ]
     } else if (current_cpu == "x86") {
@@ -947,7 +926,8 @@ config("compiler_cpu_abi") {
       }
       if (is_android) {
         # Outline atomics crash on Exynos 9810. http://crbug.com/1272795
-        cflags += [ "-mno-outline-atomics" ]
+        cflags += [ "-mno-outline-atomics", "-O3", ]
+        ldflags += [ "-Wl,-O3", ]
       }
     } else if (current_cpu == "mipsel" && !is_nacl) {
       ldflags += [ "-Wl,--hash-style=sysv" ]
@@ -1439,6 +1419,7 @@ config("default_warnings") {
       cflags += [ "/WX" ]
     }
     if (fatal_linker_warnings) {
+      arflags = [ "/WX" ]
       ldflags = [ "/WX" ]
     }
     defines = [
@@ -1552,21 +1533,21 @@ config("default_warnings") {
         "-Wno-ignored-pragma-optimize",
       ]
       
-      if (llvm_force_head_revision && !is_nacl) {
-        cflags += [
-          # TODO(https://crbug.com/1314867): Clean up and enable.
-          "-Wno-deprecated-non-prototype",
-        ]
-      }
-      
       if (!is_nacl) {
         # TODO(https://crbug.com/1300731) Clean up and enable.
         cflags += [ "-Wno-unqualified-std-cast-call" ]
+
+        # TODO(https://crbug.com/1314867): Clean up and enable.
+        cflags += [ "-Wno-deprecated-non-prototype" ]
       }
 
-      if (is_chromeos || default_toolchain == "//build/toolchain/cros:target") {
-        # TODO(https://crbug.com/1016945): Re-enable once ChromeOS toolchain is up to date
-        cflags += [ "-Wno-builtin-assume-aligned-alignment" ]
+      if (!is_nacl && !(is_chromeos ||
+                        default_toolchain == "//build/toolchain/cros:target")) {
+        # TODO(https://crbug.com/1316298): Re-enable once test failure is figured out
+        cflags += [
+          "-Xclang",
+          "-no-opaque-pointers",
+        ]
       }
 
       if (is_fuchsia) {
@@ -2174,9 +2155,9 @@ config("optimize") {
     cflags = [ "-O3" ] + common_optimize_on_cflags
   }
   if (optimize_for_size) {
-    rustflags = [ "-Copt-level=3", "-Ctarget-feature=+sse3,+sse4,+aes,+avx,+avx2", ]
+    rustflags = [ "-Copt-level=3", "-Ctarget-feature=+sse4,+aes,+avx,+avx2", ]
   } else {
-    rustflags = [ "-Copt-level=3", "-Ctarget-feature=+sse3,+sse4,+aes,+avx,+avx2", ]
+    rustflags = [ "-Copt-level=3", "-Ctarget-feature=+sse4,+aes,+avx,+avx2", ]
   }
   ldflags = common_optimize_on_ldflags
 }
@@ -2244,7 +2225,7 @@ config("optimize_max") {
     } else {
       cflags = [ "-O3" ] + common_optimize_on_cflags
     }
-    rustflags = [ "-Copt-level=3", "-Ctarget-feature=+sse3,+sse4,+aes,+avx,+avx2", ]
+    rustflags = [ "-Copt-level=3", "-Ctarget-feature=+sse4,+aes,+avx,+avx2", ]
   }
 }
 
@@ -2277,7 +2258,7 @@ config("optimize_speed") {
     } else {
       cflags = [ "-O3" ] + common_optimize_on_cflags
     }
-    rustflags = [ "-Copt-level=3", "-Ctarget-feature=+sse3,+sse4,+aes,+avx,+avx2", ]
+    rustflags = [ "-Copt-level=3", "-Ctarget-feature=+sse4,+aes,+avx,+avx2", ]
   }
 }
 
@@ -2412,7 +2393,7 @@ config("symbols") {
       cflags += [ "-gcodeview-ghash" ]
       ldflags = [ "/DEBUG:GHASH" ]
     } else {
-      ldflags = [ "/DEBUG" ]
+      ldflags = [ "/DEBUG:NONE" ]
     }
 
     # All configs using /DEBUG should include this:
@@ -2448,7 +2429,7 @@ config("symbols") {
     # flag, so we can use use -g1 for pnacl and nacl-clang compiles.
     # gcc nacl is is_nacl && !is_clang, pnacl and nacl-clang are && is_clang.
     if ((!is_nacl || is_clang) && current_os != "zos") {
-      cflags += [ "-g2" ]
+      cflags += [ "-g0" ]
     }
 
     if (!is_nacl && is_clang && !is_tsan && !is_asan &&
@@ -2466,7 +2447,7 @@ config("symbols") {
     }
 
     if (is_apple) {
-      swiftflags = [ "-g" ]
+      swiftflags = [ "-g0" ]
     }
 
     if (use_debug_fission) {
@@ -2522,7 +2503,7 @@ config("symbols") {
       ]
     }
   }
-  rustflags = [ "-g", "-Copt-level=3", "-Ctarget-feature=+sse3,+sse4,+aes,+avx,+avx2", ]
+  rustflags = [ "-g0", "-Copt-level=3", "-Ctarget-feature=+sse4,+aes,+avx,+avx2", ]
 }
 
 # Minimal symbols.
@@ -2537,7 +2518,7 @@ config("minimal_symbols") {
       cflags += [ "-gcodeview-ghash" ]
       ldflags = [ "/DEBUG:GHASH" ]
     } else {
-      ldflags = [ "/DEBUG" ]
+      ldflags = [ "/DEBUG:NONE" ]
     }
 
     # All configs using /DEBUG should include this:
@@ -2547,7 +2528,7 @@ config("minimal_symbols") {
     if (is_clang) {
       # -gline-tables-only is the same as -g1, but clang-cl only exposes the
       # former.
-      cflags += [ "-gline-tables-only" ]
+      cflags += [ "-g0" ]
     }
   } else {
     cflags = []
@@ -2573,7 +2554,7 @@ config("minimal_symbols") {
     # flag, so we can use use -g1 for pnacl and nacl-clang compiles.
     # gcc nacl is is_nacl && !is_clang, pnacl and nacl-clang are && is_clang.
     if (!is_nacl || is_clang) {
-      cflags += [ "-g1" ]
+      cflags += [ "-g0" ]
     }
 
     if (!is_nacl && is_clang && !is_tsan && !is_asan &&
@@ -2595,7 +2576,7 @@ config("minimal_symbols") {
 
     asmflags = cflags
   }
-  rustflags = [ "-Cdebuginfo=1", "-Copt-level=3", "-Ctarget-feature=+sse3,+sse4,+aes,+avx,+avx2", ]
+  rustflags = [ "-Cdebuginfo=1", "-Copt-level=3", "-Ctarget-feature=+sse4,+aes,+avx,+avx2", ]
 }
 
 # This configuration contains function names only. That is, the compiler is
