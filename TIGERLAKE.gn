@@ -648,11 +648,10 @@ config("compiler") {
   if (!is_debug && use_thin_lto && is_a_target_toolchain) {
     assert(use_lld, "LTO is only supported with lld")
 
-    cflags += [ "-flto=thin" ]
-    if (!is_apple) {
-      # TODO(lgrey): Enable unit splitting for Mac when supported.
-      cflags += [ "-fsplit-lto-unit" ]
-    }
+    cflags += [
+      "-flto=thin",
+      "-fsplit-lto-unit",
+    ]
 
     # Limit the size of the ThinLTO cache to the lesser of 10% of
     # available disk space, 40GB and 100000 files.
@@ -892,10 +891,13 @@ config("compiler_cpu_abi") {
     if (current_cpu == "x64") {
       cflags += [
         "-m64",
+        "-O3",
         "-march=tigerlake",
         "-mtune=tigerlake",
+        "-maes",
+        "-fp-contract=fast",
       ]
-      ldflags += [ "-m64", "-Wl,-mllvm,-march=haswell", "-Wl,-mllvm,-fp-contract=fast", ]
+      ldflags += [ "-m64", "-Wl,-O3", "-Wl,-mllvm,-march=haswell", "-Wl,-mllvm,-fp-contract=fast", ]
     } else if (current_cpu == "x86") {
       cflags += [ "-m32" ]
       ldflags += [ "-m32" ]
