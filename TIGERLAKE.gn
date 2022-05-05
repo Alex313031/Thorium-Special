@@ -897,7 +897,7 @@ config("compiler_cpu_abi") {
         "-maes",
         "-ffp-contract=fast",
       ]
-      ldflags += [ "-m64", "-Wl,-O3", "-Wl,-mllvm,-march=haswell", "-Wl,-mllvm,-fp-contract=fast", ]
+      ldflags += [ "-m64", "-Wl,-O3", "-Wl,-mllvm,-march=tigerlake", "-Wl,-mllvm,-fp-contract=fast", ]
     } else if (current_cpu == "x86") {
       cflags += [ "-m32" ]
       ldflags += [ "-m32" ]
@@ -1538,18 +1538,6 @@ config("default_warnings") {
       if (!is_nacl) {
         # TODO(https://crbug.com/1300731) Clean up and enable.
         cflags += [ "-Wno-unqualified-std-cast-call" ]
-
-        # TODO(https://crbug.com/1314867): Clean up and enable.
-        cflags += [ "-Wno-deprecated-non-prototype" ]
-      }
-
-      if (!is_nacl && !(is_chromeos ||
-                        default_toolchain == "//build/toolchain/cros:target")) {
-        # TODO(https://crbug.com/1316298): Re-enable once test failure is figured out
-        cflags += [
-          "-Xclang",
-          "-no-opaque-pointers",
-        ]
       }
 
       if (is_fuchsia) {
