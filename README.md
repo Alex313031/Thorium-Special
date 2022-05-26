@@ -13,7 +13,7 @@ Special builds of Thorium
 
 Releases will have the architecture name in the name and the .deb package to differentiate them.
 
-## Building
+## Building <img src="https://github.com/Alex313031/Thorium/blob/main/logos/NEW/build_light.svg#gh-dark-mode-only"> <img src="https://github.com/Alex313031/Thorium/blob/main/logos/NEW/build_dark.svg#gh-light-mode-only">
 
 Clone and do everything in https://github.com/Alex313031/Thorium except before building, copy the contents of one of the build.gn files in this repo to //chromium/build/config/compiler/, and modify as per below.
 
