@@ -24,4 +24,4 @@ You could modify args.gn by referencing the args.list file (also in the regular 
 
 *Thanks for using Thorium!*
 
-<img src="https://github.com/Alex313031/Thorium/blob/main/logos/STAGING/Thorium90_502.jpg" width="200">
+<img src="https://github.com/Alex313031/Thorium/blob/main/logos/STAGING/Thorium90_504.jpg" width="200">
