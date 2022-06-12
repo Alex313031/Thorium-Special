@@ -5,11 +5,11 @@ Special builds of Thorium
 
  -- Simply a seperate repo for builds of Thorium https://github.com/Alex313031/Thorium that have modified compiler flags flags or args.gn flags for specific processors or use cases. I will sometimes put builds that don't need AVX here.
 
-- NEW: Thorium Special now has builds for MacOS. Both x64 and ARM64 (for M1 Macs) are available. Kudos to @midzer for building them on his M1 Mac. \
-- NEW: Thorium Special now has ARM64 Raspberry Pi builds for the Pi 3B+ and Pi 4 The name will have ARM64 in the name.
+- NEW: Thorium Special now has builds for MacOS. Both x64 and ARM64 (for M1 Macs) are available. Kudos to @midzer for building them on his M1 Mac. &nbsp;<img src="https://raw.githubusercontent.com/Alex313031/Thorium/main/logos/STAGING/apple.png" width="28">
+- NEW: Thorium Special now has ARM64 Raspberry Pi builds for the Pi 3B+ and Pi 4 The name will have ARM64 in the name. &nbsp;<img src="https://github.com/Alex313031/Thorium/blob/main/logos/STAGING/Raspberry_Pi_Logo.svg" width="28">
 
 &ndash; Windows builds are here > https://github.com/Alex313031/Thorium-Win \
-&ndash; AVX2 builds are here > https://github.com/Alex313031/Thorium-AVX2/
+&ndash; AVX2 builds are here > https://github.com/Alex313031/Thorium-AVX2/ &nbsp;<img src="https://github.com/Alex313031/Thorium/blob/main/logos/STAGING/AVX2.png" width="42">
 
 Releases will have the architecture name in the name and the .deb package to differentiate them.
 
