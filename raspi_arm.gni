@@ -3,6 +3,7 @@
 # found in the LICENSE file.
 
 # ONLY FOR RASPBERRY PI 4!!
+# This should go in //chromium/src/config/arm.gni
 
 import("//build/config/v8_target_cpu.gni")
 
