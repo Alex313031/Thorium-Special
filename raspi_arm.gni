@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# ONLY FOR RASPBERRY PI 4!!
+
 import("//build/config/v8_target_cpu.gni")
 
 # These are primarily relevant in current_cpu == "arm" contexts, where
