@@ -2,8 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# ONLY FOR RASPBERRY PI 4!!
-
 import("//build/config/v8_target_cpu.gni")
 
 # These are primarily relevant in current_cpu == "arm" contexts, where
@@ -64,7 +62,7 @@ if (current_cpu == "arm" || v8_current_cpu == "arm") {
 
   if (arm_version == 6) {
     if (arm_arch == "") {
-    # v8 can still with version 6 but only with the armv6k extension.
+      # v8 can still with version 6 but only with the armv6k extension.
       arm_arch = "armv6k"
     }
     if (arm_tune != "") {
@@ -131,7 +129,7 @@ if (current_cpu == "arm" || v8_current_cpu == "arm") {
     # - "pac": Enables Pointer Authentication Code (PAC, featured in Armv8.3)
     # - "standard": Enables both PAC and Branch Target Identification (Armv8.5).
     # - "none": No branch protection.
-    arm_control_flow_integrity = "pac"
+    arm_control_flow_integrity = "standard"
 
     # TODO(cavalcantii): enable the feature for the following OSes next.
     if (is_mac || is_chromeos || is_fuchsia || is_win ||
