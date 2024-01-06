@@ -4,6 +4,8 @@ Special builds of Thorium for SSE3, etc.
 # *IMPORTANT!!*
 # THIS REPO NOW ONLY HOSTS SSE3 BUILDS. For MacOS, Android, and Raspberry Pi, I have made new repositories for each one as per https://github.com/Alex313031/Thorium-Special/releases/tag/migrate-final Please find links in there.
 
+### This repo is for running Thorium on systems with CPUs that lack [AVX](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions). This generally includes CPUs older than the year 2012.
+
 <img src="https://github.com/Alex313031/Thorium-AVX2/blob/main/ThoriumLogo.png">
 
  -- <s>Simply a seperate repo for builds of Thorium https://github.com/Alex313031/Thorium that have modified compiler flags flags or args.gn flags for specific processors or use cases. I will sometimes put builds that don't need AVX here.
